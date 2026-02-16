@@ -114,14 +114,15 @@ class MonsterGame {
             // Events
             Matter.Events.on(this.engine, 'collisionStart', (event) => this.handleCollision(event));
 
-            window.addEventListener('click', (e) => this.handleClick(e));
-            window.addEventListener('touchstart', (e) => this.handleClick(e));
+            // Mouse/Touch events for gameplay
+            // Desktop: Hover to move cloud
             window.addEventListener('mousemove', (e) => this.updateCloudPosition(e));
+            // Mobile: Drag to move cloud
             window.addEventListener('touchmove', (e) => this.updateCloudPosition(e));
 
-            // Long press support for continuous drop
+            // Drag-and-release interaction
             window.addEventListener('mousedown', (e) => this.handlePointerDown(e));
-            window.addEventListener('touchstart', (e) => this.handlePointerDown(e));
+            window.addEventListener('touchstart', (e) => this.handlePointerDown(e), { passive: false });
             window.addEventListener('mouseup', () => this.handlePointerUp());
             window.addEventListener('touchend', () => this.handlePointerUp());
             window.addEventListener('mouseleave', () => this.handlePointerUp());
@@ -225,30 +226,40 @@ class MonsterGame {
     }
 
     handleClick(e) {
-        // Prevent click if we're handling via pointer down/up for long press
-        if (this.isContinuous) return;
-        if (e.target.closest('#ui-overlay') || e.target.closest('.modal')) return;
-        if (this.isDropping || this.isGameOver) return;
-        this.dropMonster();
+        // Click handling is replaced by pointer events for drag-and-release
+        // This method might be deprecated or used only for specific UI interactions not covered by pointer events
     }
 
     handlePointerDown(e) {
         if (e.target.closest('#ui-overlay') || e.target.closest('.modal')) return;
         if (this.isGameOver) return;
 
+        // Prevent default touch behavior (scrolling) if needed, though CSS touch-action handles most
+        // if (e.cancelable) e.preventDefault(); 
+
         this.isMouseDown = true;
         this.updateCloudPosition(e);
 
+        // Continuous mode logic: if enabled, start dropping immediately/continuously
         if (this.isContinuous) {
             this.startContinuousDrop();
-        } else if (!this.isDropping) {
-            this.dropMonster();
         }
+        // Standard mode: "Hold to decide position" -> Do nothing here except update position (done above)
     }
 
     handlePointerUp() {
+        if (!this.isMouseDown) return;
         this.isMouseDown = false;
-        this.stopContinuousDrop();
+
+        if (this.isContinuous) {
+            this.stopContinuousDrop();
+        } else {
+            // Standard mode: Drop on release
+            // Only drop if we are not currently dropping (though the game logic handles that check)
+            if (!this.isDropping && !this.isGameOver) {
+                this.dropMonster();
+            }
+        }
     }
 
     startContinuousDrop() {
