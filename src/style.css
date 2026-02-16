@@ -1,0 +1,418 @@
+:root {
+  --primary-color: #ff6b6b;
+  --secondary-color: #4ecdc4;
+  --accent-color: #ffe66d;
+  --text-color: #ffffff;
+  --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --bg-overlay: rgba(0, 0, 0, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  font-family: 'M PLUS Rounded 1c', 'Segoe UI', sans-serif;
+  overflow: hidden;
+  background-color: #2c3e50;
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  background-image: url('./assets/bg/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* UI Overlay */
+#ui-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#ui-overlay * {
+  pointer-events: auto;
+}
+
+/* Score Area - Top Left */
+.score-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.score-item {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 8px 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 110px;
+  transition: transform 0.2s ease;
+}
+
+.score-item:hover {
+  transform: scale(1.05);
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  opacity: 0.9;
+  letter-spacing: 1px;
+  text-shadow: var(--text-shadow);
+  margin-bottom: 2px;
+}
+
+#current-score,
+#best-score {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  font-feature-settings: "tnum";
+}
+
+/* Next Area - Top Right */
+#next-area {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  padding: 10px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 85px;
+  transition: transform 0.2s ease;
+}
+
+#next-area:hover {
+  transform: scale(1.05);
+}
+
+#next-monster-preview {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#next-monster-preview img {
+  max-width: 85%;
+  max-height: 85%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+}
+
+/* Controls - Bottom Right */
+.controls {
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.icon-btn,
+.text-btn {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  color: white;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-btn {
+  border-radius: 30px;
+  width: auto;
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: bold;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.icon-btn:hover,
+.text-btn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.icon-btn:active,
+.text-btn:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Game Area */
+#game-container {
+  flex: 1;
+  position: relative;
+  margin: 0;
+  /* マージンをリセットして全画面に */
+  width: 100%;
+  height: 100%;
+
+  /* 3D Box Effect - 実際にはMatter.jsの壁で見えない壁を作るが、見た目はここで作る */
+  /* 今回は全画面プレイにするため、コンテナ自体の枠線は消して、底だけ残すなどの調整も可能だが、
+     スマホライクにするなら、画面端＝壁とするのが直感的。
+     ただし、ユーザー要望の「3Dボックス」を維持するため、少し内側にボックスを描画する */
+
+  margin: 110px 15px 15px 15px;
+  /* 上部にUIエリア用の余白 */
+  height: calc(100vh - 125px);
+  /* 高さ調整 */
+
+  border: 4px solid var(--glass-border);
+  border-top: none;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    inset 0 -10px 20px rgba(255, 255, 255, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 24px 24px;
+  overflow: visible;
+  /* パーティクルが飛び出すように */
+}
+
+/* 3D Box sides (pseudo elements) */
+#game-container::before {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: -4px;
+  width: calc(100% + 8px);
+  height: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  transform: perspective(500px) rotateX(20deg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Cloud and Hanging Monster */
+#cloud-container {
+  position: absolute;
+  top: -90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  transition: left 0.1s ease-out;
+  /* スムーズな追従 */
+  pointer-events: none;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+}
+
+#cloud {
+  font-size: 72px;
+  line-height: 1;
+}
+
+#hanging-monster {
+  position: absolute;
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  /* 揺れるアニメーション */
+  animation: gentle-sway 3s ease-in-out infinite alternate;
+}
+
+@keyframes gentle-sway {
+  0% {
+    transform: translateX(-50%) rotate(-5deg);
+  }
+
+  100% {
+    transform: translateX(-50%) rotate(5deg);
+  }
+}
+
+#hanging-monster img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Game Over Modal */
+#game-over {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#game-over:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 40px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+  width: 320px;
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal h1 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: none;
+}
+
+.modal p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  font-weight: bold;
+  color: #555;
+}
+
+#final-score {
+  font-size: 48px;
+  color: var(--primary-color);
+  display: block;
+  margin-top: 10px;
+}
+
+#restart-btn {
+  background: linear-gradient(135deg, var(--primary-color), #ff8e8e);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(255, 107, 107, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+#restart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(255, 107, 107, 0.5);
+}
+
+#restart-btn:active {
+  transform: translateY(1px);
+}
+
+/* Particles */
+.particle-flower {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0;
+  /* 花びらの形をCSSで作る（簡易版） */
+  background: white;
+  border-radius: 50% 0 50% 0;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes particle-fade-out {
+  0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot));
+    opacity: 0;
+  }
+}

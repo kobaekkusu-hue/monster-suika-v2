@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>モンスター合成パズル</title>
+    <link rel="stylesheet" href="./src/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <div id="ui-overlay">
+            <div class="score-container">
+                <div class="score-item">
+                    <span class="label">SCORE</span>
+                    <span id="current-score">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="label">BEST</span>
+                    <span id="best-score">0</span>
+                </div>
+            </div>
+
+            <div id="next-area">
+                <span class="label">NEXT</span>
+                <div id="next-monster-preview"></div>
+            </div>
+
+            <div class="controls">
+                <button id="toggle-bgm" class="icon-btn">🔊</button>
+                <button id="toggle-continuous" class="text-btn">通常投下</button>
+            </div>
+        </div>
+
+        <div id="game-container">
+            <!-- Matter.js canvas will be injected here -->
+            <div id="cloud-container">
+                <div id="cloud">☁️</div>
+                <div id="hanging-monster"></div>
+            </div>
+        </div>
+
+        <div id="game-over" class="hidden">
+            <div class="modal">
+                <h1>GAME OVER</h1>
+                <p>最終スコア: <span id="final-score">0</span></p>
+                <button id="restart-btn">もう一度あそぶ</button>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import './src/game.js';
+    </script>
+</body>
+
+</html>
