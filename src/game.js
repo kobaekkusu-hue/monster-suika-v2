@@ -207,6 +207,7 @@ class MonsterGame {
         if (relativeX > maxX) relativeX = maxX;
 
         this.cloudContainer.style.left = `${(relativeX / (this.gameContainer.clientWidth || 400)) * 100}%`;
+
     }
 
     handleClick(e) {
