@@ -136,15 +136,29 @@ class MonsterGame {
             if (restartBtn) restartBtn.addEventListener('click', () => location.reload());
 
             // Interaction to enable audio (due to browser policy)
+            // Interaction to enable audio (due to browser policy)
             const enableAudio = () => {
                 if (this.isBgmOn && this.sounds.bgm.paused) {
-                    this.sounds.bgm.play().catch(e => console.log('Initial BGM play failed:', e));
+                    this.sounds.bgm.play()
+                        .then(() => {
+                            console.log('BGM started via user interaction');
+                            // 再生に成功したらリスナーを解除
+                            window.removeEventListener('click', enableAudio);
+                            window.removeEventListener('touchstart', enableAudio);
+                            window.removeEventListener('pointerdown', enableAudio);
+                            window.removeEventListener('keydown', enableAudio);
+                        })
+                        .catch(e => {
+                            console.log('Initial BGM play failed (will retry):', e);
+                            // 失敗した場合はリスナーを解除せず、次の操作で再試行させる
+                        });
                 }
-                window.removeEventListener('click', enableAudio);
-                window.removeEventListener('touchstart', enableAudio);
             };
+            // より広範なイベントで発火させる
             window.addEventListener('click', enableAudio);
             window.addEventListener('touchstart', enableAudio);
+            window.addEventListener('pointerdown', enableAudio);
+            window.addEventListener('keydown', enableAudio);
 
             // Start
             Matter.Render.run(this.render);
