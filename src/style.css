@@ -221,9 +221,9 @@ body {
      スマホライクにするなら、画面端＝壁とするのが直感的。
      ただし、ユーザー要望の「3Dボックス」を維持するため、少し内側にボックスを描画する */
 
-  margin: 140px 15px 15px 15px;
-  /* 上部にUIエリア用の余白 (110px -> 140px に拡大) */
-  height: calc(100vh - 155px);
+  margin: 220px 15px 15px 15px;
+  /* 上部にUIエリア用の余白 (140px -> 220px に拡大) */
+  height: calc(100vh - 235px);
   /* 高さ調整 */
 
   border: 4px solid var(--glass-border);
@@ -254,8 +254,8 @@ body {
 /* Cloud and Hanging Monster */
 #cloud-container {
   position: absolute;
-  top: -60px;
-  /* 雲の位置を下げる (-90px -> -60px) */
+  top: -80px;
+  /* 雲の位置を下げる (-60px -> -80px) */
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
